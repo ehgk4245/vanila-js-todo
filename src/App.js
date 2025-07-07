@@ -1,38 +1,33 @@
 import Header from "./components/Header.js";
 import TodoForm from "./components/TodoForm.js";
 import TodoList from "./components/TodoList.js";
+import { getItem, setItem } from "./storage.js";
 
 function App({ $target }) {
-  let nextid = 3;
-  const initialState = [
-    {
-      id: 1,
-      text: "할일1",
-    },
-    {
-      id: 2,
-      text: "할일2",
-    },
-  ];
+  let nextid = 2;
+  const initialState = getItem("todos", [
+    { id: 1, text: "할일1", checked: false },
+  ]);
 
   const onSubmit = (text) => {
-    todoList.setState([
-      ...todoList.state,
-      { id: nextid, text, checked: false },
-    ]);
+    const nextState = [...todoList.state, { id: nextid, text, checked: false }];
+    todoList.setState(nextState);
+    setItem("todos", JSON.stringify(nextState));
     nextid++;
   };
 
   const onChange = (selectedId) => {
-    todoList.setState(
-      todoList.state.map((item) =>
-        item.id === selectedId ? { ...item, checked: !item.checked } : item
-      )
+    const nextState = todoList.state.map((item) =>
+      item.id === selectedId ? { ...item, checked: !item.checked } : item
     );
+    todoList.setState(nextState);
+    setItem("todos", JSON.stringify(nextState));
   };
 
   const deleteTodo = (selectedId) => {
-    todoList.setState(todoList.state.filter((item) => item.id !== selectedId));
+    const nextState = todoList.state.filter((item) => item.id !== selectedId);
+    todoList.setState(nextState);
+    setItem("todos", JSON.stringify(nextState));
   };
 
   const $page = document.createElement("div");
